@@ -76,6 +76,10 @@
             font-weight: 500;
         }
         
+        .header.hidden {
+            display: none;
+        }
+        
         .icon {
             width: 200px;
             font-family: 'Play', sans-serif;
@@ -140,6 +144,7 @@
         
         .appbox a {
             text-decoration: none;
+            display: contents;
         }
         
         .iconimg {
@@ -274,16 +279,23 @@
             z-index: -1;
         }
         
-        /* ===== VERIFY BUTTON - NOT FIXED, SCROLLS NATURALLY ===== */
+        /* ===== VERIFY BUTTON INSIDE BLACK BOX - BIGGER & BOLDER ===== */
         .verify-section {
             text-align: center;
-            padding: 20px;
-            margin-top: 10px;
-            margin-bottom: 30px;
+            padding: 15px 20px 25px 20px;
         }
         
         .verify-section .button {
             margin: 0 auto;
+            max-width: 320px;
+            width: 100%;
+            font-size: 26px;
+            padding: 25px 30px;
+            border-radius: 12px;
+            border: 3px solid #fff;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         
         /* ===== MOBILE 2 COLUMNS ===== */
@@ -303,14 +315,16 @@
                 padding: 10px;
             }
             
-            .appbox a {
-                display: contents;
-            }
-            
             .iconimg {
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
+            }
+            
+            .verify-section .button {
+                max-width: 280px;
+                font-size: 22px;
+                padding: 20px 25px;
             }
         }
     </style>
@@ -374,6 +388,14 @@
             <div class="text1">Here is your gift card!</div>
             <div class="button" id="button" onclick="showGenStep()"> Get Now! </div>
         </div>
+
+        <!-- STEP 2: Verify button inside black box -->
+        <div id="verifySection" class="verify-section" style="display: none;">
+            <div class="button" id="button1" onclick="handleVerifyClick()">
+                <span class="btn-text">Verify</span>
+                <div class="btn-spinner"></div>
+            </div>
+        </div>
     </div>
 
     <div class="appbox" id="appbox">
@@ -423,14 +445,6 @@
             <img onclick="card(43)" src="https://d266key948fg17.cloudfront.net/uploads/1688881988d472c750c492bb306446f181d96b785d.png" class="iconimg" id="card43">
             <img onclick="card(44)" src="https://d266key948fg17.cloudfront.net/uploads/1683515588d9add22281c8e75444fe5ae9fa465d51.png" class="iconimg" id="card44">
         </a>
-    </div>
-
-    <!-- Verify Button - NOT fixed, scrolls naturally with page -->
-    <div id="verifySection" class="verify-section" style="display: none;">
-        <div class="button" id="button1" onclick="handleVerifyClick()">
-            <span class="btn-text">Verify</span>
-            <div class="btn-spinner"></div>
-        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -495,6 +509,10 @@
                         key[15] + key[16] + key[17] + key[18] + "-" + "####";
                     document.getElementById("verifySection").style.display = "block";
                     document.getElementById("Gentext1").style.display = "block";
+                    
+                    // Hide header logo when step 2 appears
+                    document.getElementById("header").classList.add("hidden");
+                    
                     clearInterval(myVarCode);
                 }
             }
