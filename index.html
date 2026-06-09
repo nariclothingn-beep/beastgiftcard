@@ -94,18 +94,6 @@
             font-weight: bold;
         }
         
-        .showin {
-            animation: showin 0.5s;
-            animation-fill-mode: forwards;
-        }
-        
-        @keyframes showin {
-            0% { transform: scale(0); }
-            30% { transform: scale(1); }
-            60% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
         input {
             width: 320px;
             text-align: center;
@@ -342,7 +330,7 @@
             display: block;
         }
         
-        /* ===== MOBILE FIX - NO ANIMATION ===== */
+        /* ===== MOBILE 2 COLUMNS ===== */
         @media (max-width: 768px) {
             .status-bar {
                 font-size: 14px;
@@ -352,28 +340,21 @@
                 padding: 8px 5px;
             }
             
+            .appbox {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+                padding: 10px;
+            }
+            
+            .appbox a {
+                display: contents;
+            }
+            
             .iconimg {
-                max-width: 80px;
-                margin: 5px;
-            }
-            
-            /* Mobile mein card hover animation remove */
-            .iconimg:hover {
-                transform: none;
-                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-                border: none;
-                background-color: transparent;
-            }
-            
-            /* Mobile mein selected card animation remove */
-            .selectedcard {
-                transform: none;
-                box-shadow: 0px -25px 20px -20px rgba(255, 255, 255, 0.45), 25px 0 20px -20px rgba(255, 255, 255, 0.45), 0px 25px 20px -20px rgba(255, 255, 255, 0.45), -25px 0 20px -20px rgba(255, 255, 255, 0.45);
-            }
-            
-            /* Mobile mein button hover animation remove */
-            .button:hover {
-                transform: none;
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
             }
         }
     </style>
