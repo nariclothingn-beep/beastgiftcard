@@ -66,8 +66,8 @@
             z-index: -1;
         }
         
-        /* ===== VIDEO-STYLE ANIMATED BACKGROUND ===== */
-        .bg-video {
+        /* ===== ANIMATED BACKGROUND - SINGLE IMAGE GIF EFFECT ===== */
+        .bg-animated {
             position: fixed;
             top: 0;
             left: 0;
@@ -77,27 +77,94 @@
             overflow: hidden;
         }
         
-        .bg-video img {
+        .bg-animated::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: url('https://d13pxqgp3ixdbh.cloudfront.net/uploads/1781050088e2108dd4bee41d23b08ba4f05b4be6e4.png') center center no-repeat;
+            background-size: cover;
+            animation: bgMove 15s ease-in-out infinite alternate;
+        }
+        
+        /* Ken Burns / Pan-Zoom Effect */
+        @keyframes bgMove {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+            25% {
+                transform: scale(1.15) translate(-2%, -2%);
+            }
+            50% {
+                transform: scale(1.25) translate(2%, -1%);
+            }
+            75% {
+                transform: scale(1.15) translate(-1%, 2%);
+            }
+            100% {
+                transform: scale(1.3) translate(0, 0);
+            }
+        }
+        
+        /* Floating particles overlay for extra GIF feel */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            animation: bgZoom 20s ease-in-out infinite alternate;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
         }
         
-        @keyframes bgZoom {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
         }
         
-        /* Overlay for better text readability */
+        .particle:nth-child(1) { left: 10%; animation-duration: 8s; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-duration: 12s; animation-delay: 1s; width: 6px; height: 6px; }
+        .particle:nth-child(3) { left: 30%; animation-duration: 10s; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-duration: 14s; animation-delay: 0.5s; width: 3px; height: 3px; }
+        .particle:nth-child(5) { left: 50%; animation-duration: 9s; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 60%; animation-duration: 11s; animation-delay: 1.5s; width: 5px; height: 5px; }
+        .particle:nth-child(7) { left: 70%; animation-duration: 13s; animation-delay: 2.5s; }
+        .particle:nth-child(8) { left: 80%; animation-duration: 7s; animation-delay: 0s; width: 4px; height: 4px; }
+        .particle:nth-child(9) { left: 90%; animation-duration: 15s; animation-delay: 4s; }
+        .particle:nth-child(10) { left: 15%; animation-duration: 10s; animation-delay: 3.5s; width: 3px; height: 3px; }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        /* Dark overlay for readability */
         .bg-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             z-index: -1;
         }
         
@@ -357,10 +424,23 @@
 </head>
 <body>
 
-    <!-- Video-Style Animated Background -->
-    <div class="bg-video">
-        <img src="https://d13pxqgp3ixdbh.cloudfront.net/uploads/1781050088e2108dd4bee41d23b08ba4f05b4be6e4.png" alt="background">
+    <!-- Animated Background - Single Image with GIF-like effect -->
+    <div class="bg-animated"></div>
+    
+    <!-- Floating particles for extra GIF feel -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
+    
     <div class="bg-overlay"></div>
 
     <center>
