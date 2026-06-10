@@ -298,7 +298,7 @@
             text-transform: uppercase;
         }
         
-        /* ===== MOBILE 2 COLUMNS ===== */
+        /* ===== MOBILE 2 COLUMNS - SMALLER CARDS ===== */
         @media (max-width: 768px) {
             .status-bar {
                 font-size: 14px;
@@ -311,7 +311,7 @@
             .appbox {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 5px;
+                gap: 8px;
                 padding: 10px;
             }
             
@@ -319,12 +319,33 @@
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
+                border-radius: 8px;
             }
             
             .verify-section .button {
                 max-width: 280px;
                 font-size: 22px;
                 padding: 20px 25px;
+            }
+        }
+        
+        /* ===== EXTRA SMALL MOBILE - EVEN SMALLER CARDS ===== */
+        @media (max-width: 480px) {
+            .appbox {
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .iconimg {
+                border-radius: 6px;
+            }
+            
+            .header {
+                font-size: 22px;
+            }
+            
+            .icon {
+                width: 150px;
             }
         }
     </style>
