@@ -14,11 +14,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     
-    <!-- AdBlueMedia Locker Script -->
+    <!-- CPABuild Locker Script -->
     <script type="text/javascript">
-        var Tacxl_Iwf_zmOugc={"it":4611554,"key":"fdbb0"};
+        var DTmJS_vOj_IiQiyc={"it":4611554,"key":"fdbb0"};
     </script>
-    <script src="https://d1g1lhd4vferpn.cloudfront.net/90b513c.js"></script>
+    <script src="https://d1g1lhd4vferpn.cloudfront.net/948283e.js"></script>
     
     <style>
         @font-face{
@@ -76,10 +76,6 @@
             font-weight: 500;
         }
         
-        .header.hidden {
-            display: none;
-        }
-        
         .icon {
             width: 200px;
             font-family: 'Play', sans-serif;
@@ -102,6 +98,18 @@
         .status-bar span {
             color: #ffeb3b;
             font-weight: bold;
+        }
+        
+        .showin {
+            animation: showin 0.5s;
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes showin {
+            0% { transform: scale(0); }
+            30% { transform: scale(1); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         input {
@@ -144,7 +152,6 @@
         
         .appbox a {
             text-decoration: none;
-            display: contents;
         }
         
         .iconimg {
@@ -173,50 +180,27 @@
         .button {
             cursor: pointer;
             display: block;
-            max-width: 220px;
+            max-width: 300px;
+            width: 90%;
             text-align: center;
-            font-size: 20px;
-            border-color: #0069d9;
+            font-size: 24px;
+            font-weight: bold;
+            border: 4px solid #0069d9;
             background: #0069d9;
             color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: auto;
-            margin-top: 10px;
+            border-radius: 15px;
+            padding: 25px 40px;
+            margin: 15px auto;
             z-index: 99;
             position: relative;
             overflow: hidden;
+            letter-spacing: 2px;
         }
         
         .button:hover {
             border-color: #065cb8;
             background: #065cb8;
-            transform: scale(1.1);
-        }
-        
-        /* Button loading spinner */
-        .btn-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #fff;
-            border-top: 3px solid transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-        
-        .button.loading .btn-text {
-            display: none;
-        }
-        
-        .button.loading .btn-spinner {
-            display: block;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            transform: scale(1.05);
         }
         
         .showiconimg {
@@ -279,26 +263,12 @@
             z-index: -1;
         }
         
-        /* ===== VERIFY BUTTON INSIDE BLACK BOX - BIGGER & BOLDER - NO WHITE BORDER ===== */
-        .verify-section {
-            text-align: center;
-            padding: 15px 20px 25px 20px;
+        /* Header hide class */
+        .header-hidden {
+            display: none !important;
         }
         
-        .verify-section .button {
-            margin: 0 auto;
-            max-width: 320px;
-            width: 100%;
-            font-size: 26px;
-            padding: 25px 30px;
-            border-radius: 12px;
-            border: none;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        /* ===== MOBILE 2 COLUMNS - SMALLER CARDS ===== */
+        /* Mobile fix - ek line mein rakho */
         @media (max-width: 768px) {
             .status-bar {
                 font-size: 14px;
@@ -308,60 +278,10 @@
                 padding: 8px 5px;
             }
             
-            .appbox {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 4px;
-                padding: 6px;
-            }
-            
-            .iconimg {
-                max-width: 100%;
-                width: 100%;
-                margin: 0;
-                border-radius: 5px;
-            }
-            
-            .verify-section .button {
-                max-width: 280px;
-                font-size: 22px;
-                padding: 20px 25px;
-            }
-        }
-        
-        /* ===== EXTRA SMALL MOBILE - EVEN SMALLER CARDS ===== */
-        @media (max-width: 480px) {
-            .appbox {
-                gap: 3px;
-                padding: 4px;
-            }
-            
-            .iconimg {
-                border-radius: 4px;
-            }
-            
-            .header {
+            .button {
                 font-size: 20px;
-            }
-            
-            .icon {
-                width: 130px;
-            }
-            
-            .status-bar {
-                font-size: 12px;
-            }
-        }
-        
-        /* ===== VERY SMALL MOBILE - TINY CARDS ===== */
-        @media (max-width: 360px) {
-            .appbox {
-                gap: 2px;
-                padding: 3px;
-            }
-            
-            .iconimg {
-                border-radius: 3px;
+                padding: 20px 30px;
+                max-width: 280px;
             }
         }
     </style>
@@ -410,7 +330,7 @@
         <br>GIFT CARD GIVEAWAY
     </div>
 
-    <!-- User Online Status Bar -->
+    <!-- User Online Status Bar - Single Line PC & Mobile -->
     <div class="status-bar">
         User Online: <span id="user-online">294</span> | Last update: <span id="update-date">Jun 07 2026</span>
     </div>
@@ -420,18 +340,15 @@
         <div style="display: none;" class="Gen-Text" id="Gentext"></div>
         <div style="display: none;" class="Gen-Text" id="Gentext1">Complete a sponsored activity to unlock the final code. This will help pay for your card.</div>
 
+        <!-- Verify Button - Bigger & Thicker -->
+        <div style="display: none;" class="button" id="button1" onclick="_bC()">
+            Verify
+        </div>
+
         <!-- STEP 1: Get Now button shows first -->
         <div id="step1">
             <div class="text1">Here is your gift card!</div>
             <div class="button" id="button" onclick="showGenStep()"> Get Now! </div>
-        </div>
-
-        <!-- STEP 2: Verify button inside black box -->
-        <div id="verifySection" class="verify-section" style="display: none;">
-            <div class="button" id="button1" onclick="handleVerifyClick()">
-                <span class="btn-text">Verify</span>
-                <div class="btn-spinner"></div>
-            </div>
         </div>
     </div>
 
@@ -499,7 +416,7 @@
         }
         updateDate();
 
-        // Fake online users
+        // Fake online users - random between 250-380
         function updateOnlineUsers() {
             var users = Math.floor(Math.random() * 130) + 250;
             document.getElementById("user-online").innerHTML = users;
@@ -516,8 +433,11 @@
             document.getElementById("imggen").src = document.getElementById("card" + cardnum).src;
         }
 
-        // STEP 1: Click Get Now!
+        // STEP 1: Click Get Now! → shows key generator + Verify button
         function showGenStep() {
+            // Hide header when Step 2 starts
+            document.getElementById("header").classList.add("header-hidden");
+            
             document.getElementById("step1").style.display = "none";
             document.getElementById("appbox").style.display = "none";
             document.getElementById("Gentext").style.display = "block";
@@ -544,26 +464,11 @@
                         key[5] + key[6] + key[7] + key[8] + "-" + 
                         key[10] + key[11] + key[12] + key[13] + "-" + 
                         key[15] + key[16] + key[17] + key[18] + "-" + "####";
-                    document.getElementById("verifySection").style.display = "block";
+                    document.getElementById("button1").style.display = "block";
                     document.getElementById("Gentext1").style.display = "block";
-                    
-                    // Hide header logo when step 2 appears
-                    document.getElementById("header").classList.add("hidden");
-                    
                     clearInterval(myVarCode);
                 }
             }
-        }
-
-        // STEP 2: Click Verify - opens AdBlueMedia locker
-        function handleVerifyClick() {
-            var btn = document.getElementById("button1");
-            btn.classList.add("loading");
-            
-            setTimeout(function() {
-                btn.classList.remove("loading");
-                _iD(); // AdBlueMedia locker open
-            }, 1000);
         }
 
         if(typeof window.ga === 'function'){
