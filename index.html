@@ -279,7 +279,7 @@
             z-index: -1;
         }
         
-        /* ===== VERIFY BUTTON INSIDE BLACK BOX - BIGGER & BOLDER ===== */
+        /* ===== VERIFY BUTTON INSIDE BLACK BOX - BIGGER & BOLDER - NO WHITE BORDER ===== */
         .verify-section {
             text-align: center;
             padding: 15px 20px 25px 20px;
@@ -292,7 +292,7 @@
             font-size: 26px;
             padding: 25px 30px;
             border-radius: 12px;
-            border: 3px solid #fff;
+            border: none;
             font-weight: bold;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -311,15 +311,15 @@
             .appbox {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                padding: 10px;
+                gap: 6px;
+                padding: 8px;
             }
             
             .iconimg {
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
-                border-radius: 8px;
+                border-radius: 6px;
             }
             
             .verify-section .button {
@@ -332,20 +332,24 @@
         /* ===== EXTRA SMALL MOBILE - EVEN SMALLER CARDS ===== */
         @media (max-width: 480px) {
             .appbox {
-                gap: 6px;
-                padding: 8px;
+                gap: 4px;
+                padding: 6px;
             }
             
             .iconimg {
-                border-radius: 6px;
+                border-radius: 4px;
             }
             
             .header {
-                font-size: 22px;
+                font-size: 20px;
             }
             
             .icon {
-                width: 150px;
+                width: 130px;
+            }
+            
+            .status-bar {
+                font-size: 12px;
             }
         }
     </style>
